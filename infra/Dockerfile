@@ -32,8 +32,13 @@ RUN pecl install -o -f redis \
     &&  rm -rf /tmp/pear \
     &&  docker-php-ext-enable redis
 
+COPY . /app
+RUN chown -R www-data:www-data /app/storage
+
 # Set working directory
-WORKDIR /var/www
+WORKDIR /app
+RUN composer install
 
 USER $user
 
+ENTRYPOINT [ "php","artisan", "serve", "--host=0.0.0.0", "--port=80" ]

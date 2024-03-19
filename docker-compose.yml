@@ -2,16 +2,18 @@ services:
   app:
     container_name: "php-payment-system"
     build:
-      context: ./infra/
-      dockerfile: Dockerfile
-    working_dir: /var/project
-    command: "tail -f /dev/null"
+      context: .
+      dockerfile: infra/Dockerfile
+    working_dir: /app
     volumes:
-      - ./:/var
+      - ./:/app
     networks:
       - networks-payment-system
     ports:
       - 80:80
+    depends_on:
+      - database
+
   database:
     container_name: "db-payment-system"
     image: mariadb:latest
@@ -22,7 +24,7 @@ services:
       MARIADB_PASSWORD: devpass
       MARIADB_ROOT_PASSWORD: databaseroot
     volumes:
-      - "./database/data:/var/lib/mysql:Z"
+      - "./infra/mysql:/var/lib/mysql:Z"
     ports:
       - 3306:3306
     networks:
